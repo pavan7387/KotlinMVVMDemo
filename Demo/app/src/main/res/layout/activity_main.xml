@@ -18,8 +18,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-
-
         <TextView
             android:id="@+id/tv_frame_name"
             android:layout_width="wrap_content"
@@ -29,18 +27,36 @@
             android:textStyle="bold"
             android:alpha="1"
             android:textColor="@color/color_white"
-            android:text="@string/gallery"/>
-
-
+            android:text="@string/gallery"
+            android:layout_marginLeft="23dp" />
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_image"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/rl_toolbar" />
+
+    <TextView
+        android:id="@+id/tv_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="23dp"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:alpha="1"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textColor="@color/color_black"
+        android:text="@string/no_internet_nplease_connect_to_internet"
+        android:layout_marginLeft="23dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rl_toolbar"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

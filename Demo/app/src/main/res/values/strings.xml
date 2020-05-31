@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Demo</string>
     <string name="gallery">Gallery</string>
+    <string name="no_internet_nplease_connect_to_internet">No Internet !\nPlease Connect to internet</string>
 </resources>

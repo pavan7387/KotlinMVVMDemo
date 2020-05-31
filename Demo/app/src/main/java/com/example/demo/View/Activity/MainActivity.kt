@@ -1,9 +1,16 @@
 package com.example.demo
 
 import android.app.Dialog
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -14,9 +21,12 @@ import com.example.demo.Util.AppUtil
 import com.example.demo.View.Adapter.GalleryListAdapter
 import com.example.demo.ViewModel.MediaViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
+    private var isApiCalled: Boolean = false
+    private lateinit var wifiReceiver: BroadcastReceiver
     private lateinit var mGalleryListAdapter: GalleryListAdapter
     private lateinit var photoGridManager: GridLayoutManager
     private lateinit var mMediaViewModel: MediaViewModel
@@ -25,8 +35,37 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        registerBroadcast()
         setUpViewModel()
-        getMediaList()
+    }
+
+    private fun registerBroadcast() {
+        wifiReceiver = WifiReceiver()
+        try {
+            registerReceiver(wifiReceiver, IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"))
+        }catch (e: Exception){}
+    }
+
+    inner class WifiReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val conMan: ConnectivityManager? =context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val netInfo: NetworkInfo? = conMan?.getActiveNetworkInfo()
+            if (netInfo != null){
+                if (mMediaViewModel.getMediaList().size ==0) {
+                    tv_internet.visibility = View.GONE
+                    rv_image.visibility = View.VISIBLE
+                    getMediaList()
+                }
+            }else{
+                 if (mMediaViewModel.getMediaList().size ==0){
+                     tv_internet.visibility= View.VISIBLE
+                     rv_image.visibility= View.GONE
+                 }else{
+                     tv_internet.visibility= View.GONE
+                     rv_image.visibility= View.VISIBLE
+                 }
+            }
+        }
     }
 
     private fun setUpViewModel() {
@@ -42,11 +81,14 @@ class MainActivity : AppCompatActivity() {
         mMediaViewModel.getImageFaild().observe(this,Observer{
             Toast.makeText(this,it,Toast.LENGTH_SHORT).show()
             mDialog?.dismiss()
+            isApiCalled = false
         })
     }
 
     private fun getMediaList() {
-        if (mMediaViewModel.getMediaList().size == 0) {
+        if (mMediaViewModel.getMediaList().size == 0 && !isApiCalled) {
+            Log.d("dialogapiii","a")
+            isApiCalled = true
             mDialog = AppUtil.showProgressDialog(this)
             mMediaViewModel.getMedia(this)
         }
